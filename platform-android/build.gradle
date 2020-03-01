@@ -1,0 +1,46 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion '25.0.3'
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        applicationId 'com.lyndir.masterpassword'
+        minSdkVersion 19
+        targetSdkVersion 25
+        versionCode 20501
+        versionName '2.5.1'
+        jackOptions.enabled true
+    }
+
+    // release with: STORE_PW=$(mpw masterpassword.keystore) KEY_PW_ANDROID=$(mpw masterpassword-android) gradle masterpassword-android:assembleRelease
+    signingConfigs {
+        release {
+            storeFile file( 'masterpassword.keystore' )
+            storePassword System.getenv( 'STORE_PW' )
+
+            keyAlias 'masterpassword-android'
+            keyPassword System.getenv( 'KEY_PW_ANDROID' )
+        }
+    }
+    buildTypes {
+        release {
+            if (System.getenv( 'KEY_PW_ANDROID' ) != null)
+                signingConfig signingConfigs.release
+        }
+    }
+}
+
+dependencies {
+    compile project( ':masterpassword-algorithm' )
+    compile project( ':masterpassword-tests' )
+
+    compile group: 'org.slf4j', name: 'slf4j-android', version: '1.7.13-underscore'
+    compile group: 'com.jakewharton', name: 'butterknife', version: '8.5.1'
+    annotationProcessor group: 'com.jakewharton', name: 'butterknife-compiler', version: '8.5.1'
+}
